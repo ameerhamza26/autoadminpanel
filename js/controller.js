@@ -1470,7 +1470,7 @@ app.controller('BranchAvailableSeviceCtrl', function ($scope, $rootScope, Branch
         }
         $scope.loaderr = true;
         Branch.updateWorkingDay(final_Services, $scope.final_obj.branchId).success(function (res) {
-            alert("Success fully updated services");
+//            alert("Success fully updated services");
             $scope.loaderr = false;
         })
                 .error(function (err) {
@@ -1635,7 +1635,7 @@ app.controller('BranchShitfCtrl', function ($scope, Branch, $rootScope, $filter)
             $scope.SaveShiftloader = false;
             $scope.addShiftObj = {};
             $scope.timeObj = {};
-            alert("successfuly added branch shift");
+//            alert("successfuly added branch shift");
         })
                 .error(function (err) {
                     $scope.SaveShiftloader = false;
@@ -1662,13 +1662,15 @@ app.controller('BranchShitfCtrl', function ($scope, Branch, $rootScope, $filter)
         try {
             $scope.addShiftObj.ShiftStartTime = $filter("date")($scope.timeObj.ShiftStartTime, 'h:mm a');
             $scope.addShiftObj.ShiftEndTime = $filter("date")($scope.timeObj.ShiftEndTime, 'h:mm a');
+            $scope.addShiftObj.ShiftYearId = $scope.addShiftObj.ShifttYearId;
+
+            console.log('year id', $scope.addShiftObj);
             console.log($scope.addShiftObj)
             $scope.SaveShiftloader = true;
             Branch.updateBranchShift($scope.addShiftObj).success(function (res) {
                 $scope.SaveShiftloader = false;
                 $scope.addShiftObj = {};
                 $scope.timeObj = {};
-                alert("successfuly updated branch shift");
             })
                     .error(function (err) {
                         $scope.SaveShiftloader = false;
