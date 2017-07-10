@@ -1,6 +1,6 @@
 var app = angular.module('Autotek.controller', [])
 
-app.controller('LoginCtrl', function($scope, $rootScope, $window, $state, User, localStorageService, $location, NavigateState) {
+app.controller('LoginCtrl', function ($scope, $rootScope, $window, $state, User, localStorageService, $location, NavigateState) {
     $scope.user = {};
     localStorageService.remove("access_token");
 
@@ -20,7 +20,7 @@ app.controller('LoginCtrl', function($scope, $rootScope, $window, $state, User, 
     };
     $scope.Iserror = false;
     $scope.loginLoaderShow = false;
-    $scope.login = function(data) {
+    $scope.login = function (data) {
 
         $scope.loginLoaderShow = true;
         var params = {
@@ -32,53 +32,53 @@ app.controller('LoginCtrl', function($scope, $rootScope, $window, $state, User, 
             'scope': 'app1'
         };
         console.log("in login", params)
-        User.login(params).success(function(res) {
+        User.login(params).success(function (res) {
 
-                if (localStorageService.isSupported) {
-                    localStorageService.set("access_token", res);
+            if (localStorageService.isSupported) {
+                localStorageService.set("access_token", res);
 
-                    User.getUser().success(function(res) {
-                            $scope.loginLoaderShow = false;
-                            var loggedInUser = {
-                                user: res
-                            }
-                            localStorageService.set("loggedInUser", loggedInUser);
-                            //NavigateState.navigate('dashboard');
-                            if (localStorageService.get('pageLanguage') == 'en') {
-                                NavigateState.navigate('dashboard');
-                            } else {
-                                window.location = "/arabic/index.html"
-                            }
-                        })
-                        .error(function(err) {
+                User.getUser().success(function (res) {
+                    $scope.loginLoaderShow = false;
+                    var loggedInUser = {
+                        user: res
+                    }
+                    localStorageService.set("loggedInUser", loggedInUser);
+                    //NavigateState.navigate('dashboard');
+                    if (localStorageService.get('pageLanguage') == 'en') {
+                        NavigateState.navigate('dashboard');
+                    } else {
+                        window.location = "/arabic/index.html"
+                    }
+                })
+                        .error(function (err) {
                             console.log(err);
                             $scope.Iserror = true;
                             $scope.loginLoaderShow = false;
-                            User.getSaleAgent().success(function(res) {
-                                    loggedInUser = { user: res }
-                                    $rootScope.name = res.FirstName;
-                                    localStorageService.set("loggedInUser", loggedInUser);
-                                    console.log(res);
-                                    //  $ionicLoading.hide();
-                                    if (localStorageService.get('pageLanguage') == 'en') {
-                                        NavigateState.navigate('dashboard');
-                                    } else {
-                                        window.location = "/arabic/index.html"
-                                    }
-                                })
-                                .error(function(err) {
-                                    //$ionicLoading.hide();
-                                })
+                            User.getSaleAgent().success(function (res) {
+                                loggedInUser = {user: res}
+                                $rootScope.name = res.FirstName;
+                                localStorageService.set("loggedInUser", loggedInUser);
+                                console.log(res);
+                                //  $ionicLoading.hide();
+                                if (localStorageService.get('pageLanguage') == 'en') {
+                                    NavigateState.navigate('dashboard');
+                                } else {
+                                    window.location = "/arabic/index.html"
+                                }
+                            })
+                                    .error(function (err) {
+                                        //$ionicLoading.hide();
+                                    })
                         });
-                }
+            }
 
-            })
-            .error(function(err) {
-                console.log('error', err);
+        })
+                .error(function (err) {
+                    console.log('error', err);
 
-                $scope.Iserror = true;
-                $scope.loginLoaderShow = false;
-            })
+                    $scope.Iserror = true;
+                    $scope.loginLoaderShow = false;
+                })
     }
 
     if (localStorageService.get('pageLanguage') == null) {
@@ -88,22 +88,22 @@ app.controller('LoginCtrl', function($scope, $rootScope, $window, $state, User, 
         $scope.lng = localStorageService.get('pageLanguage');
     }
 
-    $scope.get_language = function(value1) {
+    $scope.get_language = function (value1) {
         console.log($scope.lng)
         localStorageService.set('pageLanguage', $scope.lng);
     }
 
-    $scope.go = function(language) {
+    $scope.go = function (language) {
         console.log(language)
         localStorageService.set('pageLanguage', language);
     }
 
 })
 
-app.controller('LogoutCtrl', function($scope, $rootScope, NavigateState, localStorageService, $location, $state) {
+app.controller('LogoutCtrl', function ($scope, $rootScope, NavigateState, localStorageService, $location, $state) {
     $scope.user = localStorageService.get("loggedInUser").user;
     $scope.userName = $scope.user.FirstName;
-    $scope.logout = function() {
+    $scope.logout = function () {
         if (localStorageService.get('access_token')) {
             localStorageService.remove("access_token");
             localStorageService.remove("loggedInUser");
@@ -117,37 +117,37 @@ app.controller('LogoutCtrl', function($scope, $rootScope, NavigateState, localSt
 
 })
 
-app.controller('DashboardApiCtrl', function($scope, User, $http, $state) {
+app.controller('DashboardApiCtrl', function ($scope, User, $http, $state) {
     console.log('dashboard called');
 
-    User.getDashboardStats().success(function(res) {
+    User.getDashboardStats().success(function (res) {
 
-            $scope.NoOfCustomersToday = res.NoOfCustomersToday;
+        $scope.NoOfCustomersToday = res.NoOfCustomersToday;
 
-            $scope.NoOfCustomersThisWeek = res.NoOfCustomersThisWeek;
+        $scope.NoOfCustomersThisWeek = res.NoOfCustomersThisWeek;
 
-            $scope.NoOfCustomersThisMonth = res.NoOfCustomersThisMonth;
+        $scope.NoOfCustomersThisMonth = res.NoOfCustomersThisMonth;
 
-            $scope.NoOfCustomersThisYear = res.NoOfCustomersThisYear;
+        $scope.NoOfCustomersThisYear = res.NoOfCustomersThisYear;
 
 
-            $scope.ConversionRate = res.ConversionRate;
+        $scope.ConversionRate = res.ConversionRate;
 
-            $scope.BounceRate = res.BounceRate;
+        $scope.BounceRate = res.BounceRate;
 
-            $scope.NoOfSalesAgents = res.NoOfSalesAgents;
+        $scope.NoOfSalesAgents = res.NoOfSalesAgents;
 
-            $scope.NoOfSalesOrders = res.NoOfSalesOrders;
+        $scope.NoOfSalesOrders = res.NoOfSalesOrders;
 
-        })
-        .error(function(err) {
-            console.log('The error', err);
-        })
+    })
+            .error(function (err) {
+                console.log('The error', err);
+            })
 })
 
 
 
-app.controller('AppSingleuser', function($scope, User, $stateParams, $state) {
+app.controller('AppSingleuser', function ($scope, User, $stateParams, $state) {
     $scope.isDataLoading = true;
     console.log('app single user called')
     $scope.deleteId = $stateParams.id;
@@ -155,79 +155,79 @@ app.controller('AppSingleuser', function($scope, User, $stateParams, $state) {
     $scope.NewPassword = "";
     console.log($scope.updateUser)
     console.log($scope.deleteId);
-    User.getCustopmerOrder(14).success(function(res) {
-            console.log('orders', res);
-        })
-        .error(function(err) {
-            console.log(err);
-        })
-    User.getSingleAppUser($stateParams.id).success(function(res) {
-            $scope.singleUser = res[0];
-            // console.log($scope.singleUser)
-            $scope.isDataLoading = false;
-        })
-        .error(function(err) {
-            console.log(err);
-            $scope.isDataLoading = false;
-        })
-        // Change Password Function Starts //
-    $scope.ChangePassword = function(singleUser) {
-            $scope.switchBool = function(value) {
-                $scope[value] = !$scope[value];
-            };
-            $scope.loaderr = true;
-            $scope.showSuccessAlert = false;
-            $scope.showErrorAlert = false;
-            $scope.errorText = "";
-            $scope.passwordCustom = {
-                "User_GUID": $scope.singleUser.User_GUID,
-                "NewPassword": $scope.NewPassword
-            }
-            User.changePassword($scope.passwordCustom).success(function() {
-                    console.log(res);
-                    $scope.loaderr = false;
-                    $scope.showSuccessAlert = true;
-                })
-                .error(function(err) {
-                    console.log(err);
-                    $scope.loaderr = false
-                    $scope.errorText = err.Message;
-                    $scope.showErrorAlert = true;
-                })
-        }
-        // Change Password Function Starts //
-    $scope.deleteUser = function(deleteId) {
-        $scope.switchBool = function(value) {
+    User.getCustopmerOrder(14).success(function (res) {
+        console.log('orders', res);
+    })
+            .error(function (err) {
+                console.log(err);
+            })
+    User.getSingleAppUser($stateParams.id).success(function (res) {
+        $scope.singleUser = res[0];
+        // console.log($scope.singleUser)
+        $scope.isDataLoading = false;
+    })
+            .error(function (err) {
+                console.log(err);
+                $scope.isDataLoading = false;
+            })
+    // Change Password Function Starts //
+    $scope.ChangePassword = function (singleUser) {
+        $scope.switchBool = function (value) {
             $scope[value] = !$scope[value];
         };
         $scope.loaderr = true;
         $scope.showSuccessAlert = false;
         $scope.showErrorAlert = false;
         $scope.errorText = "";
-        User.deleteSingleAppUser(deleteId).success(function(res) {
-                console.log(res);
-                console.log('delete method called success');
-                $scope.loaderr = false;
-                $scope.showSuccessAlert = true;
-            })
-            .error(function(err) {
-                console.log(err);
-                $scope.loaderr = false
-                $scope.errorText = err.Message;
-                $scope.showErrorAlert = true;
-            })
-    }
-    $scope.navigateToUpdate = function(id) {
-            $state.go('updateMobileUser', { id: id });
+        $scope.passwordCustom = {
+            "User_GUID": $scope.singleUser.User_GUID,
+            "NewPassword": $scope.NewPassword
         }
-        // $scope.singleUser={
-        //         "Id" : $scope.singleUser.Id, "FirstName" : "TestUpdated" , "LastName" : "001" , 
-        //         "MobileNumber" : "0000333999", "EmailAddress" : "test@gmail.com",
-        //         "ERPReference" : "ERP_0003"
-        //     }
+        User.changePassword($scope.passwordCustom).success(function () {
+            console.log(res);
+            $scope.loaderr = false;
+            $scope.showSuccessAlert = true;
+        })
+                .error(function (err) {
+                    console.log(err);
+                    $scope.loaderr = false
+                    $scope.errorText = err.Message;
+                    $scope.showErrorAlert = true;
+                })
+    }
+    // Change Password Function Starts //
+    $scope.deleteUser = function (deleteId) {
+        $scope.switchBool = function (value) {
+            $scope[value] = !$scope[value];
+        };
+        $scope.loaderr = true;
+        $scope.showSuccessAlert = false;
+        $scope.showErrorAlert = false;
+        $scope.errorText = "";
+        User.deleteSingleAppUser(deleteId).success(function (res) {
+            console.log(res);
+            console.log('delete method called success');
+            $scope.loaderr = false;
+            $scope.showSuccessAlert = true;
+        })
+                .error(function (err) {
+                    console.log(err);
+                    $scope.loaderr = false
+                    $scope.errorText = err.Message;
+                    $scope.showErrorAlert = true;
+                })
+    }
+    $scope.navigateToUpdate = function (id) {
+        $state.go('updateMobileUser', {id: id});
+    }
+    // $scope.singleUser={
+    //         "Id" : $scope.singleUser.Id, "FirstName" : "TestUpdated" , "LastName" : "001" , 
+    //         "MobileNumber" : "0000333999", "EmailAddress" : "test@gmail.com",
+    //         "ERPReference" : "ERP_0003"
+    //     }
 
-    $scope.updateAppUser = function(singleUser) {
-        $scope.switchBool = function(value) {
+    $scope.updateAppUser = function (singleUser) {
+        $scope.switchBool = function (value) {
             $scope[value] = !$scope[value];
         };
         $scope.loaderr = true;
@@ -244,74 +244,13 @@ app.controller('AppSingleuser', function($scope, User, $stateParams, $state) {
         }
 
         console.log('singleUserrrr', $scope.singleUsercustom);
-        User.UpdateSingleAppUser($scope.singleUsercustom).success(function(res) {
-                console.log(res);
-                $scope.loaderr = false;
-                $scope.showSuccessAlert = true;
-                console.log('successfuly updated');
-                $scope.isDataLoading = false;
-            })
-            .error(function function_name(err) {
-                console.log(err);
-                $scope.loaderr = false
-                $scope.errorText = err.Message;
-                $scope.showErrorAlert = true;
-                $scope.isDataLoading = false;
-            })
-    }
-})
-app.controller('SingleSalesAgent', function($scope, User, $stateParams, $state) {
-    $scope.isDataLoading = true;
-    $scope.getStatus = function(value6) {
-        if ($scope.SingleSalesAgent.Status == "Active") {
-            $scope.SingleSalesAgent.status = false;
-        } else {
-            $scope.SingleSalesAgent.status = true;
-        }
-    }
-    $scope.getComissionType = function(value3) {
-        if ($scope.SingleSalesAgent.AgentCommission == "Percentage") {
-            $scope.SingleSalesAgent.CommissionType = false;
-        } else {
-            $scope.SingleSalesAgent.CommissionType = true;
-        }
-    }
-    $scope.onChangeCompany = function() {
-            console.log($scope.SingleSalesAgent.AffiliateCompanyId.Id);
-        }
-        //---------Update Sales Agent Starts-------//
-    $scope.updateSingleSalesAgent = function(SingleSalesAgent) {
-            $scope.switchBool = function(value) {
-                $scope[value] = !$scope[value];
-            };
-            $scope.loaderr = true;
-            $scope.showSuccessAlert = false;
-            $scope.showErrorAlert = false;
-            $scope.errorText = "";
-            $scope.singleSalesAgentCustom = {
-                "Id": $scope.SingleSalesAgent.Id,
-                "firstname": $scope.SingleSalesAgent.FirstName,
-                "lastname": $scope.SingleSalesAgent.LastName,
-                "ContactNumber": $scope.SingleSalesAgent.ContactNumber,
-                "EmailAddress": $scope.SingleSalesAgent.EmailAddress,
-                "AffiliateCompanyId": $scope.SingleSalesAgent.AffiliateCompanyId.Id,
-                "Address": $scope.SingleSalesAgent.Address,
-                "ERPReference": $scope.SingleSalesAgent.ERPReference,
-                "isActive": $scope.SingleSalesAgent.status,
-                "CommissionDetails": [{
-                    "CommissionRate": $scope.SingleSalesAgent.CommissionStructure,
-                    "IsPercentage": $scope.SingleSalesAgent.CommissionType,
-                    "BankDetails": $scope.SingleSalesAgent.BankDetials
-                }]
-            }
-            console.log('singleUserrrr', $scope.singleSalesAgentCustom);
-            User.UpdateSalesAgents($scope.singleSalesAgentCustom).success(function(res) {
-                    console.log(res);
-                    $scope.loaderr = false;
-                    $scope.showSuccessAlert = true;
-                    console.log('Sale Agent successfuly updated');
-                    $scope.isDataLoading = false;
-                })
+        User.UpdateSingleAppUser($scope.singleUsercustom).success(function (res) {
+            console.log(res);
+            $scope.loaderr = false;
+            $scope.showSuccessAlert = true;
+            console.log('successfuly updated');
+            $scope.isDataLoading = false;
+        })
                 .error(function function_name(err) {
                     console.log(err);
                     $scope.loaderr = false
@@ -319,98 +258,159 @@ app.controller('SingleSalesAgent', function($scope, User, $stateParams, $state) 
                     $scope.showErrorAlert = true;
                     $scope.isDataLoading = false;
                 })
+    }
+})
+app.controller('SingleSalesAgent', function ($scope, User, $stateParams, $state) {
+    $scope.isDataLoading = true;
+    $scope.getStatus = function (value6) {
+        if ($scope.SingleSalesAgent.Status == "Active") {
+            $scope.SingleSalesAgent.status = false;
+        } else {
+            $scope.SingleSalesAgent.status = true;
         }
-        //---------Update Sales Agent Ends-------//
+    }
+    $scope.getComissionType = function (value3) {
+        if ($scope.SingleSalesAgent.AgentCommission == "Percentage") {
+            $scope.SingleSalesAgent.CommissionType = false;
+        } else {
+            $scope.SingleSalesAgent.CommissionType = true;
+        }
+    }
+    $scope.onChangeCompany = function () {
+        console.log($scope.SingleSalesAgent.AffiliateCompanyId.Id);
+    }
+    //---------Update Sales Agent Starts-------//
+    $scope.updateSingleSalesAgent = function (SingleSalesAgent) {
+        $scope.switchBool = function (value) {
+            $scope[value] = !$scope[value];
+        };
+        $scope.loaderr = true;
+        $scope.showSuccessAlert = false;
+        $scope.showErrorAlert = false;
+        $scope.errorText = "";
+        $scope.singleSalesAgentCustom = {
+            "Id": $scope.SingleSalesAgent.Id,
+            "firstname": $scope.SingleSalesAgent.FirstName,
+            "lastname": $scope.SingleSalesAgent.LastName,
+            "ContactNumber": $scope.SingleSalesAgent.ContactNumber,
+            "EmailAddress": $scope.SingleSalesAgent.EmailAddress,
+            "AffiliateCompanyId": $scope.SingleSalesAgent.AffiliateCompanyId.Id,
+            "Address": $scope.SingleSalesAgent.Address,
+            "ERPReference": $scope.SingleSalesAgent.ERPReference,
+            "isActive": $scope.SingleSalesAgent.status,
+            "CommissionDetails": [{
+                    "CommissionRate": $scope.SingleSalesAgent.CommissionStructure,
+                    "IsPercentage": $scope.SingleSalesAgent.CommissionType,
+                    "BankDetails": $scope.SingleSalesAgent.BankDetials
+                }]
+        }
+        console.log('singleUserrrr', $scope.singleSalesAgentCustom);
+        User.UpdateSalesAgents($scope.singleSalesAgentCustom).success(function (res) {
+            console.log(res);
+            $scope.loaderr = false;
+            $scope.showSuccessAlert = true;
+            console.log('Sale Agent successfuly updated');
+            $scope.isDataLoading = false;
+        })
+                .error(function function_name(err) {
+                    console.log(err);
+                    $scope.loaderr = false
+                    $scope.errorText = err.Message;
+                    $scope.showErrorAlert = true;
+                    $scope.isDataLoading = false;
+                })
+    }
+    //---------Update Sales Agent Ends-------//
 
     $scope.deleteId = $stateParams.id;
     console.log($scope.deleteId);
-    User.getSingleSalesAgent($stateParams.id).success(function(res) {
-            $scope.SingleSalesAgent = res[0];
-            console.log($scope.SingleSalesAgent)
-            $scope.isDataLoading = false;
+    User.getSingleSalesAgent($stateParams.id).success(function (res) {
+        $scope.SingleSalesAgent = res[0];
+        console.log($scope.SingleSalesAgent)
+        $scope.isDataLoading = false;
+    })
+            .error(function (err) {
+                console.log(err);
+                $scope.isDataLoading = false;
+            })
+    $scope.navigateToUpdate = function (id) {
+        $state.go('updateSalesAgents', {id: id});
+    }
+    //---------- Delete Agent Starts ----------
+    $scope.deleteAgent = function (deleteId) {
+        $scope.switchBool = function (value) {
+            $scope[value] = !$scope[value];
+        };
+        $scope.loaderr = true;
+        $scope.showSuccessAlert = false;
+        $scope.showErrorAlert = false;
+        $scope.errorText = "";
+        User.deleteAgent(deleteId).success(function (res) {
+            console.log(res);
+            console.log('delete method called success');
+            $scope.loaderr = false;
+            $scope.showSuccessAlert = true;
         })
-        .error(function(err) {
-            console.log(err);
-            $scope.isDataLoading = false;
-        })
-    $scope.navigateToUpdate = function(id) {
-            $state.go('updateSalesAgents', { id: id });
-        }
-        //---------- Delete Agent Starts ----------
-    $scope.deleteAgent = function(deleteId) {
-            $scope.switchBool = function(value) {
-                $scope[value] = !$scope[value];
-            };
-            $scope.loaderr = true;
-            $scope.showSuccessAlert = false;
-            $scope.showErrorAlert = false;
-            $scope.errorText = "";
-            User.deleteAgent(deleteId).success(function(res) {
-                    console.log(res);
-                    console.log('delete method called success');
-                    $scope.loaderr = false;
-                    $scope.showSuccessAlert = true;
-                })
-                .error(function(err) {
+                .error(function (err) {
                     console.log(err);
                     $scope.loaderr = false
                     $scope.errorText = err.Message;
                     $scope.showErrorAlert = true;
                 })
-        }
-        //-----------Delete Agents Ends------
+    }
+    //-----------Delete Agents Ends------
 
-    User.getCompanies().success(function(res) {
-            $scope.Companies = res;
-        })
-        .error(function(err) {
-            console.log(err);
-        })
-        ///---------Update sales Agents Starts-----///
-    $scope.updateSalesAgents = function(SingleSalesAgent) {
-            $scope.singleSalesAgentCustom = {
-                "Id": "6",
-                "firstname": "John",
-                "lastname": "Jimmy",
-                "ContactNumber": "5554444",
-                "EmailAddress": "email@gmail.com",
-                "AffiliateCompanyId": 1,
-                "Address": "9999999",
-                "ERPReference": "ERP-Company-002",
-                "isActive": "true",
-                "CommissionDetails": [{
+    User.getCompanies().success(function (res) {
+        $scope.Companies = res;
+    })
+            .error(function (err) {
+                console.log(err);
+            })
+    ///---------Update sales Agents Starts-----///
+    $scope.updateSalesAgents = function (SingleSalesAgent) {
+        $scope.singleSalesAgentCustom = {
+            "Id": "6",
+            "firstname": "John",
+            "lastname": "Jimmy",
+            "ContactNumber": "5554444",
+            "EmailAddress": "email@gmail.com",
+            "AffiliateCompanyId": 1,
+            "Address": "9999999",
+            "ERPReference": "ERP-Company-002",
+            "isActive": "true",
+            "CommissionDetails": [{
                     "CommissionRate": "4.0",
                     "IsPercentage": "true",
                     "BankDetails": "9999-c SAMBA Bank, Riyadh, Saudi Arabia"
                 }]
-            }
         }
-        ///---------Update sales Agents Ends-----///
+    }
+    ///---------Update sales Agents Ends-----///
 })
-app.controller('SingleCompany', function($scope, User, $stateParams, $state) {
+app.controller('SingleCompany', function ($scope, User, $stateParams, $state) {
     $scope.isDataLoading = true;
     $scope.deleteId = $stateParams.id;
     console.log($scope.deleteId);
-    User.getSingleCompany($stateParams.id).success(function(res) {
-            $scope.SingleCompany = res[0];
-            console.log($scope.SingleCompany)
-            $scope.isDataLoading = false;
-        })
-        .error(function(err) {
-            console.log(err);
-            $scope.isDataLoading = false;
-        })
-    $scope.navigateToUpdate = function(id) {
-        $state.go('updateCompany', { id: id });
+    User.getSingleCompany($stateParams.id).success(function (res) {
+        $scope.SingleCompany = res[0];
+        console.log($scope.SingleCompany)
+        $scope.isDataLoading = false;
+    })
+            .error(function (err) {
+                console.log(err);
+                $scope.isDataLoading = false;
+            })
+    $scope.navigateToUpdate = function (id) {
+        $state.go('updateCompany', {id: id});
     }
-    $scope.getStatus = function(value2) {
+    $scope.getStatus = function (value2) {
         if ($scope.SingleCompany.AccountStatus == "Active") {
             $scope.SingleCompany.AccountStatus = false;
         } else {
             $scope.SingleCompany.AccountStatus = true;
         }
     }
-    $scope.getComissionType = function(value3) {
+    $scope.getComissionType = function (value3) {
         if ($scope.SingleCompany.CompanyCommissionType == "Percentage") {
             $scope.SingleCompany.CompanyCommissionType = false;
         } else {
@@ -419,24 +419,24 @@ app.controller('SingleCompany', function($scope, User, $stateParams, $state) {
     }
 
 
-    $scope.updateCompany = function(SingleCompany) {
-            $scope.switchBool = function(value) {
-                $scope[value] = !$scope[value];
-            };
-            $scope.loaderr = true;
-            $scope.showSuccessAlert = false;
-            $scope.showErrorAlert = false;
-            $scope.errorText = "";
-            $scope.singleCompanyCustom = {
-                "Id": $scope.SingleCompany.Id,
-                "CompanyName": $scope.SingleCompany.CompanyName,
-                "CompanyNameInArabic": $scope.SingleCompany.CompanyName,
-                "PhoneNumber": $scope.SingleCompany.ContactPhone,
-                "EmailAddress": $scope.SingleCompany.ContactEmail,
-                "Address": "Jeddah, KSA",
-                "IsActive": $scope.SingleCompany.AccountStatus,
-                "ERPReference": $scope.SingleCompany.CompanyErpRerence,
-                "Contacts": [{
+    $scope.updateCompany = function (SingleCompany) {
+        $scope.switchBool = function (value) {
+            $scope[value] = !$scope[value];
+        };
+        $scope.loaderr = true;
+        $scope.showSuccessAlert = false;
+        $scope.showErrorAlert = false;
+        $scope.errorText = "";
+        $scope.singleCompanyCustom = {
+            "Id": $scope.SingleCompany.Id,
+            "CompanyName": $scope.SingleCompany.CompanyName,
+            "CompanyNameInArabic": $scope.SingleCompany.CompanyName,
+            "PhoneNumber": $scope.SingleCompany.ContactPhone,
+            "EmailAddress": $scope.SingleCompany.ContactEmail,
+            "Address": "Jeddah, KSA",
+            "IsActive": $scope.SingleCompany.AccountStatus,
+            "ERPReference": $scope.SingleCompany.CompanyErpRerence,
+            "Contacts": [{
                     "PersonName": $scope.SingleCompany.ContactPerson,
                     "TelephoneNumber": $scope.SingleCompany.ContactPhone,
                     "EmailAddress": $scope.SingleCompany.ContactEmail,
@@ -447,21 +447,21 @@ app.controller('SingleCompany', function($scope, User, $stateParams, $state) {
                     "EmailAddress": $scope.SingleCompany.ContactEmail1,
                     "OtherContactDetails": $scope.SingleCompany.OtherContact
                 }],
-                "ComissionDetails": [{
+            "ComissionDetails": [{
                     "CommissionRate": $scope.SingleCompany.CompanyCommission,
                     "IsPercentage": $scope.SingleCompany.CompanyCommissionType,
                     "PaymentMethod": $scope.SingleCompany.OtherPaymentMethods,
                     "BankDetails": $scope.SingleCompany.BankAccountDetails
                 }]
-            }
-            User.UpdateCompany($scope.singleCompanyCustom).success(function(res) {
-                    console.log(res);
-                    // console.log(SingleCompany)
-                    $scope.loaderr = false;
-                    $scope.showSuccessAlert = true;
-                    console.log('company successfuly updated');
-                    $scope.isDataLoading = false;
-                })
+        }
+        User.UpdateCompany($scope.singleCompanyCustom).success(function (res) {
+            console.log(res);
+            // console.log(SingleCompany)
+            $scope.loaderr = false;
+            $scope.showSuccessAlert = true;
+            console.log('company successfuly updated');
+            $scope.isDataLoading = false;
+        })
                 .error(function function_name(err) {
                     console.log(err);
                     $scope.loaderr = false
@@ -469,89 +469,89 @@ app.controller('SingleCompany', function($scope, User, $stateParams, $state) {
                     $scope.showErrorAlert = true;
                     $scope.isDataLoading = false;
                 })
-        }
-        //--------- Delete Company ---------
-    $scope.deleteCompany = function(deleteId) {
-            $scope.switchBool = function(value) {
-                $scope[value] = !$scope[value];
-            };
-            $scope.loaderr = true;
-            $scope.showSuccessAlert = false;
-            $scope.showErrorAlert = false;
-            $scope.errorText = "";
-            User.deleteCompany(deleteId).success(function(res) {
-                    console.log(res);
-                    console.log('delete method called success');
-                    $scope.loaderr = false;
-                    $scope.showSuccessAlert = true;
-                })
-                .error(function(err) {
+    }
+    //--------- Delete Company ---------
+    $scope.deleteCompany = function (deleteId) {
+        $scope.switchBool = function (value) {
+            $scope[value] = !$scope[value];
+        };
+        $scope.loaderr = true;
+        $scope.showSuccessAlert = false;
+        $scope.showErrorAlert = false;
+        $scope.errorText = "";
+        User.deleteCompany(deleteId).success(function (res) {
+            console.log(res);
+            console.log('delete method called success');
+            $scope.loaderr = false;
+            $scope.showSuccessAlert = true;
+        })
+                .error(function (err) {
                     console.log(err);
                     $scope.loaderr = false
                     $scope.errorText = err.Message;
                     $scope.showErrorAlert = true;
                 })
-        }
-        //----------Delete Company End-------
+    }
+    //----------Delete Company End-------
 
 })
-app.controller('SinglePromotion', function($scope, User, $stateParams, $state) {
+app.controller('SinglePromotion', function ($scope, User, $stateParams, $state) {
     $scope.isDataLoading = true;
-    $scope.navigateToUpdate = function(id) {
-        $state.go('updatePromotion', { id: id });
+    $scope.navigateToUpdate = function (id) {
+        $state.go('updatePromotion', {id: id});
     }
     $scope.deleteId = $stateParams.id;
     console.log($scope.deleteId);
-    User.getSinglePromotion($stateParams.id).success(function(res) {
-            $scope.Singlepromotion = res[0];
-            console.log($scope.Singlepromotion)
-            $scope.isDataLoading = false;
-        })
-        .error(function(err) {
-            console.log(err);
-            $scope.isDataLoading = false;
-        })
+    User.getSinglePromotion($stateParams.id).success(function (res) {
+        $scope.Singlepromotion = res[0];
+        console.log($scope.Singlepromotion)
+        $scope.isDataLoading = false;
+    })
+            .error(function (err) {
+                console.log(err);
+                $scope.isDataLoading = false;
+            })
 
-    User.getTriggers().success(function(res) {
-            $scope.allTriggers = res;
-        })
-        .error(function(err) {
-            console.log(err);
-        })
-    $scope.getStatus = function(value5) {
+    User.getTriggers().success(function (res) {
+        $scope.allTriggers = res;
+    })
+            .error(function (err) {
+                console.log(err);
+            })
+    $scope.getStatus = function (value5) {
         if ($scope.Singlepromotion.Status == "Active") {
             $scope.Singlepromotion.status = false;
         } else {
             $scope.Singlepromotion.status = true;
         }
     }
-    $scope.updatePromotions = function(Singlepromotion) {
+    $scope.updatePromotions = function (Singlepromotion) {
 
-            $scope.switchBool = function(value) {
-                $scope[value] = !$scope[value];
-            };
-            $scope.loaderr = true;
-            $scope.showSuccessAlert = false;
-            $scope.showErrorAlert = false;
-            $scope.errorText = "";
-            console.log($scope.Singlepromotion.Trigger.Id);
-            $scope.singlePromotionCustom = {
-                "Id": $scope.Singlepromotion.Id,
-                "DiscountCriteriaId": $scope.Singlepromotion.Trigger.Id,
-                "CouponCode": $scope.Singlepromotion.templateCoupen,
-                "Description_EN": $scope.Singlepromotion.Title_EN,
-                "Description_AR": $scope.Singlepromotion.Title_AR,
-                "IsActive": $scope.Singlepromotion.status,
-                "EndDate": $scope.Singlepromotion.ExpiresOn
-            }
-            console.log("update object", $scope.singlePromotionCustom);
-            User.UpdatePromotion($scope.singlePromotionCustom).success(function(res) {
-                    $scope.loaderr = false;
-                    $scope.showSuccessAlert = true;
-                    console.log(res);
-                    console.log('Promotion successfuly updated');
-                    $scope.isDataLoading = false;
-                })
+        $scope.switchBool = function (value) {
+            $scope[value] = !$scope[value];
+        };
+        $scope.loaderr = true;
+        $scope.showSuccessAlert = false;
+        $scope.showErrorAlert = false;
+        $scope.errorText = "";
+        console.log($scope.Singlepromotion.Trigger.Id);
+        $scope.singlePromotionCustom = {
+            "Id": $scope.Singlepromotion.Id,
+            "DiscountCriteriaId": $scope.Singlepromotion.Trigger.Id,
+            "CouponCode": $scope.Singlepromotion.templateCoupen,
+            "Description_EN": $scope.Singlepromotion.Title_EN,
+            "Description_AR": $scope.Singlepromotion.Title_AR,
+            "IsActive": $scope.Singlepromotion.status,
+            "EndDate": $scope.Singlepromotion.ExpiresOn
+        }
+        console.log("update object", $scope.singlePromotionCustom);
+        User.UpdatePromotion($scope.singlePromotionCustom).success(function (res) {
+            $scope.loaderr = false;
+            $scope.showSuccessAlert = true;
+            console.log(res);
+            console.log('Promotion successfuly updated');
+            $scope.isDataLoading = false;
+        })
                 .error(function function_name(err) {
                     console.log(err);
                     $scope.loaderr = false
@@ -559,34 +559,34 @@ app.controller('SinglePromotion', function($scope, User, $stateParams, $state) {
                     $scope.showErrorAlert = true;
                     $scope.isDataLoading = false;
                 })
-        }
-        //---------- Delete Promotion Starts ----------
-    $scope.deletePromotions = function(deleteId) {
-            $scope.switchBool = function(value) {
-                $scope[value] = !$scope[value];
-            };
-            $scope.loaderr = true;
-            $scope.showSuccessAlert = false;
-            $scope.showErrorAlert = false;
-            $scope.errorText = "";
-            User.deletePromotion(deleteId).success(function(res) {
-                    console.log(res);
-                    console.log('delete method called success');
-                    $scope.loaderr = false;
-                    $scope.showSuccessAlert = true;
-                })
-                .error(function(err) {
+    }
+    //---------- Delete Promotion Starts ----------
+    $scope.deletePromotions = function (deleteId) {
+        $scope.switchBool = function (value) {
+            $scope[value] = !$scope[value];
+        };
+        $scope.loaderr = true;
+        $scope.showSuccessAlert = false;
+        $scope.showErrorAlert = false;
+        $scope.errorText = "";
+        User.deletePromotion(deleteId).success(function (res) {
+            console.log(res);
+            console.log('delete method called success');
+            $scope.loaderr = false;
+            $scope.showSuccessAlert = true;
+        })
+                .error(function (err) {
                     console.log(err);
                     $scope.loaderr = false
                     $scope.errorText = err.Message;
                     $scope.showErrorAlert = true;
                 })
-        }
-        //-----------Delete Promotion Ends------
+    }
+    //-----------Delete Promotion Ends------
 
 })
 
-app.controller('annualHolidayConrtoller', function($scope, User, $http, $state, $rootScope, $filter, $window) {
+app.controller('annualHolidayConrtoller', function ($scope, User, $http, $state, $rootScope, $filter, $window) {
     $scope.startDate = "";
     $scope.endDate = "";
     $scope.title = "";
@@ -604,9 +604,9 @@ app.controller('annualHolidayConrtoller', function($scope, User, $http, $state, 
     $scope.updateBtnShow = false;
     $scope.saveBtnShow = true;
 
-    $scope.addAnnualHolday = function() {
+    $scope.addAnnualHolday = function () {
 
-        $scope.switchBool = function(value) {
+        $scope.switchBool = function (value) {
             $scope[value] = !$scope[value];
         };
         $scope.loaderr = true;
@@ -630,27 +630,27 @@ app.controller('annualHolidayConrtoller', function($scope, User, $http, $state, 
             // $scope.user.UserName = $scope.user.MobileNumber;
             var url = "http://autotecauth.azurewebsites.net/identity/connect/token";
             $http.post(url, params, {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
-            }).success(function(result) {
+                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+            }).success(function (result) {
                 $http.post('http://autotecapi.azurewebsites.net/api/annualholiday', $scope.holdayObject, {
-                        headers: {
-                            'Authorization': "Bearer" + " " + result.access_token
-                        }
-                    }).success(function(res) {
-                        console.log(res)
-                        console.log('in add holiday scucess')
-                        $scope.loaderr = false;
-                        $scope.showSuccessAlert = true;
-                        $scope.isDataLoading = false;
-                        $window.location.reload();
-                    })
-                    .error(function(err) {
-                        $scope.loaderr = false
-                        $scope.errorText = err.Message;
-                        $scope.showErrorAlert = true;
-                        console.log(err)
-                        $scope.isDataLoading = false;
-                    })
+                    headers: {
+                        'Authorization': "Bearer" + " " + result.access_token
+                    }
+                }).success(function (res) {
+                    console.log(res)
+                    console.log('in add holiday scucess')
+                    $scope.loaderr = false;
+                    $scope.showSuccessAlert = true;
+                    $scope.isDataLoading = false;
+                    $window.location.reload();
+                })
+                        .error(function (err) {
+                            $scope.loaderr = false
+                            $scope.errorText = err.Message;
+                            $scope.showErrorAlert = true;
+                            console.log(err)
+                            $scope.isDataLoading = false;
+                        })
 
             })
 
@@ -661,34 +661,34 @@ app.controller('annualHolidayConrtoller', function($scope, User, $http, $state, 
 
     }
 
-    User.getHolidays().success(function(res) {
-            $scope.allHolidays = res;
-            console.log(res, 'response')
-            $scope.isDataLoading = false;
-        })
-        .error(function(err) {
-            console.log(err)
-            $scope.isDataLoading = false;
-        })
-    $scope.deleteHoliday = function(deleteIdd) {
-        $scope.switchBool = function(value) {
+    User.getHolidays().success(function (res) {
+        $scope.allHolidays = res;
+        console.log(res, 'response')
+        $scope.isDataLoading = false;
+    })
+            .error(function (err) {
+                console.log(err)
+                $scope.isDataLoading = false;
+            })
+    $scope.deleteHoliday = function (deleteIdd) {
+        $scope.switchBool = function (value) {
             $scope[value] = !$scope[value];
         };
-        User.deleteHoliday(deleteIdd).success(function(res) {
-                console.log(res, 'res')
-                $scope.loaderr = false;
-                $scope.showSuccessAlertDelete = true;
-                $window.location.reload();
-            })
-            .error(function(err) {
-                console.log(err)
-                $scope.loaderr = false
-                $scope.errorText = err.Message;
-                $scope.showErrorAlert = true;
-            })
+        User.deleteHoliday(deleteIdd).success(function (res) {
+            console.log(res, 'res')
+            $scope.loaderr = false;
+            $scope.showSuccessAlertDelete = true;
+            $window.location.reload();
+        })
+                .error(function (err) {
+                    console.log(err)
+                    $scope.loaderr = false
+                    $scope.errorText = err.Message;
+                    $scope.showErrorAlert = true;
+                })
     }
 
-    $scope.navigateToUpdateHoliday = function(object1) {
+    $scope.navigateToUpdateHoliday = function (object1) {
         console.log("SSSS", $scope.allHolidays)
 
         $scope.startdate = $filter("date")(object1.StartDate, 'yyyy-MM-dd');
@@ -700,10 +700,10 @@ app.controller('annualHolidayConrtoller', function($scope, User, $http, $state, 
         $scope.showgrid = false;
         console.log($scope.startdate, 'start date')
         console.log($scope.enddate, 'end date')
-            // console.log($scope.ttl,'title')
-            // console.log(object1.EndDate,'end date')
+        // console.log($scope.ttl,'title')
+        // console.log(object1.EndDate,'end date')
     }
-    $scope.update1 = function() {
+    $scope.update1 = function () {
 
         if ($scope.startdate != null && $scope.enddate != null && $scope.ttl != "") {
 
@@ -720,16 +720,16 @@ app.controller('annualHolidayConrtoller', function($scope, User, $http, $state, 
             }
 
             console.log($scope.updateHolidayObject, 'updated object')
-            User.UpdateHoliday($scope.updateHolidayObject).success(function(res) {
-                    console.log(res);
-                    console.log('successfuly updated');
-                    $scope.showgrid = true;
-                    $window.location.reload();
-                    // $scope.isDataLoading = false;
-                })
-                .error(function(err) {
-                    console.log(err);
-                });
+            User.UpdateHoliday($scope.updateHolidayObject).success(function (res) {
+                console.log(res);
+                console.log('successfuly updated');
+                $scope.showgrid = true;
+                $window.location.reload();
+                // $scope.isDataLoading = false;
+            })
+                    .error(function (err) {
+                        console.log(err);
+                    });
         } else {
             alert('Please fill all the fields first');
         }
@@ -737,7 +737,7 @@ app.controller('annualHolidayConrtoller', function($scope, User, $http, $state, 
 
 
 })
-app.controller('serviceQueryCtrl', function($scope, User, $http, $state, $rootScope, $window) {
+app.controller('serviceQueryCtrl', function ($scope, User, $http, $state, $rootScope, $window) {
 
     $scope.serviceTitleEn = "";
     $scope.serviceTitleAr = "";
@@ -753,9 +753,9 @@ app.controller('serviceQueryCtrl', function($scope, User, $http, $state, $rootSc
     $scope.isDataLoading = true;
     $scope.saveBtnShow = true;
 
-    $scope.addService = function() {
+    $scope.addService = function () {
 
-        $scope.switchBool = function(value) {
+        $scope.switchBool = function (value) {
             $scope[value] = !$scope[value];
         };
         $scope.loaderr = true;
@@ -774,30 +774,30 @@ app.controller('serviceQueryCtrl', function($scope, User, $http, $state, $rootSc
                 "Description_Ar": $scope.serviceDescAR
             }
             console.log('holiday object', $scope.holdayObject)
-                // $scope.user.UserName = $scope.user.MobileNumber;
+            // $scope.user.UserName = $scope.user.MobileNumber;
             var url = "http://autotecauth.azurewebsites.net/identity/connect/token";
             $http.post(url, params, {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
-            }).success(function(result) {
+                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+            }).success(function (result) {
                 $http.post('http://autotecapi.azurewebsites.net/api/service', $scope.customService, {
-                        headers: {
-                            'Authorization': "Bearer" + " " + result.access_token
-                        }
-                    }).success(function(res) {
-                        console.log(res)
-                        console.log('in add holiday scucess')
-                        $scope.loaderr = false;
-                        $scope.showSuccessAlert = true;
-                        $scope.isDataLoading = false;
-                        $window.location.reload();
-                    })
-                    .error(function(err) {
-                        $scope.loaderr = false;
-                        $scope.errorText = err.Message;
-                        $scope.showErrorAlert = true;
-                        console.log(err)
-                        $scope.isDataLoading = false;
-                    })
+                    headers: {
+                        'Authorization': "Bearer" + " " + result.access_token
+                    }
+                }).success(function (res) {
+                    console.log(res)
+                    console.log('in add holiday scucess')
+                    $scope.loaderr = false;
+                    $scope.showSuccessAlert = true;
+                    $scope.isDataLoading = false;
+                    $window.location.reload();
+                })
+                        .error(function (err) {
+                            $scope.loaderr = false;
+                            $scope.errorText = err.Message;
+                            $scope.showErrorAlert = true;
+                            console.log(err)
+                            $scope.isDataLoading = false;
+                        })
 
             })
         } else {
@@ -807,34 +807,34 @@ app.controller('serviceQueryCtrl', function($scope, User, $http, $state, $rootSc
 
     }
 
-    User.getServices().success(function(res) {
-            $scope.allServices = res;
-            console.log(res, 'response service')
-            $scope.isDataLoading = false;
-        })
-        .error(function(err) {
-            console.log(err)
-            $scope.isDataLoading = false;
-        })
+    User.getServices().success(function (res) {
+        $scope.allServices = res;
+        console.log(res, 'response service')
+        $scope.isDataLoading = false;
+    })
+            .error(function (err) {
+                console.log(err)
+                $scope.isDataLoading = false;
+            })
 
-    $scope.DeleteService = function(deleteIdd) {
-        $scope.switchBool = function(value) {
+    $scope.DeleteService = function (deleteIdd) {
+        $scope.switchBool = function (value) {
             $scope[value] = !$scope[value];
         };
-        User.deleteService(deleteIdd).success(function(res) {
-                console.log(res, 'res')
-                $scope.loaderr = false;
-                $scope.showSuccessAlertDelete = true;
-                $window.location.reload();
-            })
-            .error(function(err) {
-                console.log(err)
-                $scope.loaderr = false
-                $scope.errorText = err.Message;
-                $scope.showErrorAlert = true;
-            })
+        User.deleteService(deleteIdd).success(function (res) {
+            console.log(res, 'res')
+            $scope.loaderr = false;
+            $scope.showSuccessAlertDelete = true;
+            $window.location.reload();
+        })
+                .error(function (err) {
+                    console.log(err)
+                    $scope.loaderr = false
+                    $scope.errorText = err.Message;
+                    $scope.showErrorAlert = true;
+                })
     }
-    $scope.navigateToServiceUpdate = function(serviceObject) {
+    $scope.navigateToServiceUpdate = function (serviceObject) {
         $scope.id = serviceObject.Id;
         $scope.serviceTitleEn = serviceObject.Title_Eng;
         $scope.serviceTitleAr = serviceObject.Title_Ar;
@@ -845,7 +845,7 @@ app.controller('serviceQueryCtrl', function($scope, User, $http, $state, $rootSc
         $scope.saveBtnShow = false;
         $scope.showgrid = false;
     }
-    $scope.updateService = function() {
+    $scope.updateService = function () {
 
         if ($scope.serviceTitleEn != "" && $scope.serviceTitleAr != "" && $scope.serviceDuration != "" && $scope.serviceDescEn != "" && $scope.serviceDescAR != "") {
             $scope.customService = {
@@ -856,14 +856,14 @@ app.controller('serviceQueryCtrl', function($scope, User, $http, $state, $rootSc
                 "Description_Eng": $scope.serviceDescEn,
                 "Description_Ar": $scope.serviceDescAR
             }
-            User.UpdateService($scope.customService).success(function(res) {
-                    console.log(res)
-                    $scope.showgrid = true;
-                    $window.location.reload();
-                })
-                .error(function(err) {
-                    console.log(err);
-                })
+            User.UpdateService($scope.customService).success(function (res) {
+                console.log(res)
+                $scope.showgrid = true;
+                $window.location.reload();
+            })
+                    .error(function (err) {
+                        console.log(err);
+                    })
         } else {
             alert("Please fill all the fields first");
         }
@@ -872,13 +872,13 @@ app.controller('serviceQueryCtrl', function($scope, User, $http, $state, $rootSc
 
 })
 
-app.controller('addNewAppUser', function($scope, User, $http) {
+app.controller('addNewAppUser', function ($scope, User, $http) {
     $scope.regex = '^[a-zA-Z]+[a-zA-Z0-9._-]+@[a-z]+\.[a-z.]{2,5}$';
     $scope.addUser = {};
-    $scope.register = function() {
+    $scope.register = function () {
         // console.log($scope.user)
         // console.log('errors occured');
-        $scope.switchBool = function(value) {
+        $scope.switchBool = function (value) {
             $scope[value] = !$scope[value];
         };
         $scope.loaderr = true;
@@ -915,7 +915,7 @@ app.controller('addNewAppUser', function($scope, User, $http) {
             console.log('errors occured');
             $scope.errorText = "Email, Phone Number Or Address is Empty";
             $scope.showErrorAlert = true;
-            $scope.switchBool = function(value) {
+            $scope.switchBool = function (value) {
                 $scope[value] = !$scope[value];
                 $scope.loaderr = false;
             };
@@ -943,52 +943,52 @@ app.controller('addNewAppUser', function($scope, User, $http) {
             //.User= $scope.user
             var url = "http://autotecauth.azurewebsites.net/identity/connect/token";
             $http.post(url, params, {
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
-                }).success(function(result) {
-                    $http.post('http://autotecapi.azurewebsites.net/api/CustomerRegistration', $scope.usercustom, {
-                            headers: {
-                                'Authorization': "Bearer" + " " + result.access_token
-                            }
-                        }).success(function(res) {
-                            console.log(res);
-                            $scope.loaderr = false;
-                            $scope.showSuccessAlert = true;
-                            // $ionicLoading.hide();
-                            // var alertPopup = $ionicPopup.alert({
-                            //     title: 'Success!',
-                            //     template: 'A verication key is sent through SMS!'
-                            // });
-                            console.log('user addess success')
-                                // alertPopup.then(function(res) {
-                                //     $rootScope.navigate('home')
-                                //         //console.log('Thank you for not eating my delicious ice cream cone');
-                                // });
-                        })
-                        .error(function(err) {
-                            var error = [{ message: err.Message }]
+                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+            }).success(function (result) {
+                $http.post('http://autotecapi.azurewebsites.net/api/CustomerRegistration', $scope.usercustom, {
+                    headers: {
+                        'Authorization': "Bearer" + " " + result.access_token
+                    }
+                }).success(function (res) {
+                    console.log(res);
+                    $scope.loaderr = false;
+                    $scope.showSuccessAlert = true;
+                    // $ionicLoading.hide();
+                    // var alertPopup = $ionicPopup.alert({
+                    //     title: 'Success!',
+                    //     template: 'A verication key is sent through SMS!'
+                    // });
+                    console.log('user addess success')
+                    // alertPopup.then(function(res) {
+                    //     $rootScope.navigate('home')
+                    //         //console.log('Thank you for not eating my delicious ice cream cone');
+                    // });
+                })
+                        .error(function (err) {
+                            var error = [{message: err.Message}]
                             $scope.loaderr = false
                             $scope.errorText = err.Message;
                             $scope.showErrorAlert = true;
                             // $ionicLoading.hide();
                             // $scope.deactivate(error)
                         })
-                })
-                .error(function(error) {
+            })
+                    .error(function (error) {
 
-                    $ionicLoading.hide();
-                })
-                //$ionicSlideBoxDelegate.slide(index);
+                        $ionicLoading.hide();
+                    })
+            //$ionicSlideBoxDelegate.slide(index);
 
         }
     }
 })
-app.controller('addNewPromotion', function($state, $scope, User, $http) {
-    User.getTriggers().success(function(res) {
-            $scope.allTriggers = res;
-        })
-        .error(function(err) {
-            console.log(err);
-        })
+app.controller('addNewPromotion', function ($state, $scope, User, $http) {
+    User.getTriggers().success(function (res) {
+        $scope.allTriggers = res;
+    })
+            .error(function (err) {
+                console.log(err);
+            })
 
     $scope.regex = '^[a-zA-Z]+[a-zA-Z0-9._-]+@[a-z]+\.[a-z.]{2,5}$';
     $scope.addPromotion = {};
@@ -1002,11 +1002,11 @@ app.controller('addNewPromotion', function($state, $scope, User, $http) {
         $scope.addPromotion.status = "true";
     }
 
-    $scope.AddPromotion = function() {
+    $scope.AddPromotion = function () {
         console.log($scope.addPromotion.Trigger.Id);
         // console.log($scope.user)
         // console.log('errors occured');
-        $scope.switchBool = function(value) {
+        $scope.switchBool = function (value) {
             $scope[value] = !$scope[value];
         };
         $scope.loaderr = true;
@@ -1043,7 +1043,7 @@ app.controller('addNewPromotion', function($state, $scope, User, $http) {
             console.log('errors occured');
             $scope.errorText = "Email, Phone Number Or Address is Empty";
             $scope.showErrorAlert = true;
-            $scope.switchBool = function(value) {
+            $scope.switchBool = function (value) {
                 $scope[value] = !$scope[value];
                 $scope.loaderr = false;
             };
@@ -1069,56 +1069,56 @@ app.controller('addNewPromotion', function($state, $scope, User, $http) {
             //.User= $scope.user
             var url = "http://autotecauth.azurewebsites.net/identity/connect/token";
             $http.post(url, params, {
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
-                }).success(function(result) {
-                    $http.post('http://autotecapi.azurewebsites.net/api/discountoffers', $scope.promotionCustom, {
-                            headers: {
-                                'Authorization': "Bearer" + " " + result.access_token
-                            }
-                        }).success(function(res) {
-                            console.log(res);
-                            $scope.loaderr = false;
-                            $scope.showSuccessAlert = true;
-                            // $ionicLoading.hide();
-                            // var alertPopup = $ionicPopup.alert({
-                            //     title: 'Success!',
-                            //     template: 'A verication key is sent through SMS!'
-                            // });
-                            console.log('user addess success')
-                                // alertPopup.then(function(res) {
-                                //     $rootScope.navigate('home')
-                                //         //console.log('Thank you for not eating my delicious ice cream cone');
-                                // });
-                        })
-                        .error(function(err) {
-                            var error = [{ message: err.Message }]
+                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+            }).success(function (result) {
+                $http.post('http://autotecapi.azurewebsites.net/api/discountoffers', $scope.promotionCustom, {
+                    headers: {
+                        'Authorization': "Bearer" + " " + result.access_token
+                    }
+                }).success(function (res) {
+                    console.log(res);
+                    $scope.loaderr = false;
+                    $scope.showSuccessAlert = true;
+                    // $ionicLoading.hide();
+                    // var alertPopup = $ionicPopup.alert({
+                    //     title: 'Success!',
+                    //     template: 'A verication key is sent through SMS!'
+                    // });
+                    console.log('user addess success')
+                    // alertPopup.then(function(res) {
+                    //     $rootScope.navigate('home')
+                    //         //console.log('Thank you for not eating my delicious ice cream cone');
+                    // });
+                })
+                        .error(function (err) {
+                            var error = [{message: err.Message}]
                             $scope.loaderr = false
                             $scope.errorText = err.Message;
                             $scope.showErrorAlert = true;
                         })
-                })
-                .error(function(error) {
+            })
+                    .error(function (error) {
 
-                    $ionicLoading.hide();
-                })
+                        $ionicLoading.hide();
+                    })
 
 
         }
     }
 })
-app.controller('addNewSalesAgent', function($state, $scope, User, $http) {
+app.controller('addNewSalesAgent', function ($state, $scope, User, $http) {
 
-    $scope.navigateToUpdate = function(id) {
-        $state.go('updateCompany', { id: id });
+    $scope.navigateToUpdate = function (id) {
+        $state.go('updateCompany', {id: id});
     }
-    $scope.getStatus = function(value6) {
+    $scope.getStatus = function (value6) {
         if ($scope.addSalesAgent.Status == "Active") {
             $scope.addSalesAgent.status = false;
         } else {
             $scope.addSalesAgent.status = true;
         }
     }
-    $scope.getComissionType = function(value3) {
+    $scope.getComissionType = function (value3) {
         if ($scope.addSalesAgent.AgentCommission == "Percentage") {
             $scope.addSalesAgent.CommissionType = false;
         } else {
@@ -1126,21 +1126,21 @@ app.controller('addNewSalesAgent', function($state, $scope, User, $http) {
         }
     }
 
-    User.getCompanies(0, 10).success(function(res) {
-            $scope.allCompanies = res;
-        })
-        .error(function(err) {
-            console.log(err);
-        })
-    $scope.onChangeCompany = function() {
+    User.getCompanies(0, 10).success(function (res) {
+        $scope.allCompanies = res;
+    })
+            .error(function (err) {
+                console.log(err);
+            })
+    $scope.onChangeCompany = function () {
         console.log($scope.addSalesAgent.companeSelected.Id);
     }
     $scope.regex = '^[a-zA-Z]+[a-zA-Z0-9._-]+@[a-z]+\.[a-z.]{2,5}$';
     $scope.addSalesAgent = {};
-    $scope.registerSalesAgent = function() {
+    $scope.registerSalesAgent = function () {
         // console.log($scope.user)
         // console.log('errors occured');
-        $scope.switchBool = function(value) {
+        $scope.switchBool = function (value) {
             $scope[value] = !$scope[value];
         };
         $scope.loaderr = true;
@@ -1177,7 +1177,7 @@ app.controller('addNewSalesAgent', function($state, $scope, User, $http) {
             console.log('errors occured');
             $scope.errorText = "Email, Phone Number Or Address is Empty";
             $scope.showErrorAlert = true;
-            $scope.switchBool = function(value) {
+            $scope.switchBool = function (value) {
                 $scope[value] = !$scope[value];
                 $scope.loaderr = false;
             };
@@ -1201,153 +1201,153 @@ app.controller('addNewSalesAgent', function($state, $scope, User, $http) {
                 "ERPReference": $scope.addSalesAgent.AgentErpReference,
                 "isActive": $scope.addSalesAgent.status,
                 "CommissionDetails": [{
-                    "CommissionRate": $scope.addSalesAgent.commRate,
-                    "IsPercentage": $scope.addSalesAgent.CommissionType,
-                    "BankDetails": $scope.addSalesAgent.BankDetails
-                }]
+                        "CommissionRate": $scope.addSalesAgent.commRate,
+                        "IsPercentage": $scope.addSalesAgent.CommissionType,
+                        "BankDetails": $scope.addSalesAgent.BankDetails
+                    }]
             };
             console.log($scope.singleAgentCustom);
             //.User= $scope.user
             var url = "http://autotecauth.azurewebsites.net/identity/connect/token";
             $http.post(url, params, {
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
-                }).success(function(result) {
-                    $http.post('http://autotecapi.azurewebsites.net/api/salesagents', $scope.singleAgentCustom, {
-                            headers: {
-                                'Authorization': "Bearer" + " " + result.access_token
-                            }
-                        }).success(function(res) {
-                            console.log(res);
-                            $scope.loaderr = false;
-                            $scope.showSuccessAlert = true;
-                            // $ionicLoading.hide();
-                            // var alertPopup = $ionicPopup.alert({
-                            //     title: 'Success!',
-                            //     template: 'A verication key is sent through SMS!'
-                            // });
-                            console.log('user addess success')
-                                // alertPopup.then(function(res) {
-                                //     $rootScope.navigate('home')
-                                //         //console.log('Thank you for not eating my delicious ice cream cone');
-                                // });
-                        })
-                        .error(function(err) {
-                            var error = [{ message: err.Message }]
+                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+            }).success(function (result) {
+                $http.post('http://autotecapi.azurewebsites.net/api/salesagents', $scope.singleAgentCustom, {
+                    headers: {
+                        'Authorization': "Bearer" + " " + result.access_token
+                    }
+                }).success(function (res) {
+                    console.log(res);
+                    $scope.loaderr = false;
+                    $scope.showSuccessAlert = true;
+                    // $ionicLoading.hide();
+                    // var alertPopup = $ionicPopup.alert({
+                    //     title: 'Success!',
+                    //     template: 'A verication key is sent through SMS!'
+                    // });
+                    console.log('user addess success')
+                    // alertPopup.then(function(res) {
+                    //     $rootScope.navigate('home')
+                    //         //console.log('Thank you for not eating my delicious ice cream cone');
+                    // });
+                })
+                        .error(function (err) {
+                            var error = [{message: err.Message}]
                             $scope.loaderr = false
                             $scope.errorText = err.Message;
                             $scope.showErrorAlert = true;
                             // $ionicLoading.hide();
                             // $scope.deactivate(error)
                         })
-                })
-                .error(function(error) {
+            })
+                    .error(function (error) {
 
-                    $ionicLoading.hide();
-                })
-                //$ionicSlideBoxDelegate.slide(index);
+                        $ionicLoading.hide();
+                    })
+            //$ionicSlideBoxDelegate.slide(index);
 
         }
     }
 })
 
-.controller('profile_details_page', function($state, $scope, User) {
-    console.log("This is profile_details_page controller");
+        .controller('profile_details_page', function ($state, $scope, User) {
+            console.log("This is profile_details_page controller");
 
-    // == Setting Customers Profile Information == //
+            // == Setting Customers Profile Information == //
 
-    // $scop.customer_name = localStorageService.get('userName');
-    // $scop.customer_name = localStorageService.get();
-    // $scop.customer_name = localStorageService.get();
-    // $scop.customer_name = localStorageService.get();
-    // $scop.customer_name = localStorageService.get();
-    // $scop.customer_name = localStorageService.get();
-    // $scop.customer_name = localStorageService.get();
-    // $scop.customer_name = localStorageService.get();
-    // $scop.customer_name = localStorageService.get();
-    // $scop.customer_name = localStorageService.get();
-    // $scop.customer_name = localStorageService.get();
-    // $scop.customer_name = localStorageService.get();
-    // $scop.customer_name = localStorageService.get();
-    // $scop.customer_name = localStorageService.get();
-    // $scop.customer_name = localStorageService.get();
+            // $scop.customer_name = localStorageService.get('userName');
+            // $scop.customer_name = localStorageService.get();
+            // $scop.customer_name = localStorageService.get();
+            // $scop.customer_name = localStorageService.get();
+            // $scop.customer_name = localStorageService.get();
+            // $scop.customer_name = localStorageService.get();
+            // $scop.customer_name = localStorageService.get();
+            // $scop.customer_name = localStorageService.get();
+            // $scop.customer_name = localStorageService.get();
+            // $scop.customer_name = localStorageService.get();
+            // $scop.customer_name = localStorageService.get();
+            // $scop.customer_name = localStorageService.get();
+            // $scop.customer_name = localStorageService.get();
+            // $scop.customer_name = localStorageService.get();
+            // $scop.customer_name = localStorageService.get();
 
 
-    User.getOrderHistory()
-        .success(function(res) {
-            // console.log('Sales History', res);
-            if (res != null || res != "") {
-                $scope.salesHistory = res;
-            }
+            User.getOrderHistory()
+                    .success(function (res) {
+                        // console.log('Sales History', res);
+                        if (res != null || res != "") {
+                            $scope.salesHistory = res;
+                        }
+                    })
+                    .error(function (err) {
+                        console.log('error', err);
+                    })
+
+            User.getCustomerPromotionOffers()
+                    .success(function (res) {
+                        console.log('All Customer Promotion Offers', res);
+                        if (res != null || res != "") {
+                            // $scope.consumedPromotions = res;
+                        }
+                    })
+                    .error(function (err) {
+                        console.log('error', err);
+                    })
+
+
+            User.getConsumedPromotionOffers()
+                    .success(function (res) {
+                        console.log('All Consumed Promotion Offers', res);
+                        if (res != null || res != "") {
+                            $scope.consumedOffers = res;
+                        }
+                    })
+                    .error(function (err) {
+                        console.log('error', err);
+                    })
+
+            User.getAvailablePromotionOffers()
+                    .success(function (res) {
+                        console.log('All Available Promotion Offers', res);
+                        if (res != null || res != "") {
+                            // $scope.consumedPromotions = res;
+                        }
+                    })
+                    .error(function (err) {
+                        console.log('error', err);
+                    })
+
+
         })
-        .error(function(err) {
-            console.log('error', err);
-        })
 
-    User.getCustomerPromotionOffers()
-        .success(function(res) {
-            console.log('All Customer Promotion Offers', res);
-            if (res != null || res != "") {
-                // $scope.consumedPromotions = res;
-            }
-        })
-        .error(function(err) {
-            console.log('error', err);
-        })
-
-
-    User.getConsumedPromotionOffers()
-        .success(function(res) {
-            console.log('All Consumed Promotion Offers', res);
-            if (res != null || res != "") {
-                $scope.consumedOffers = res;
-            }
-        })
-        .error(function(err) {
-            console.log('error', err);
-        })
-
-    User.getAvailablePromotionOffers()
-        .success(function(res) {
-            console.log('All Available Promotion Offers', res);
-            if (res != null || res != "") {
-                // $scope.consumedPromotions = res;
-            }
-        })
-        .error(function(err) {
-            console.log('error', err);
-        })
-
-
-})
-
-app.controller('BranchMainInfo', function($scope, User, Branch, $rootScope) {
+app.controller('BranchMainInfo', function ($scope, User, Branch, $rootScope) {
     console.log("BranchMainInfo ctrl")
     $scope.saveBtnShow = true;
     $scope.isDataLoading = true;
     $scope.deleteloaderr = [];
-    Branch.getAll().success(function(res) {
-            console.log("res", res)
-            $scope.allBranches = res;
-            $rootScope.allBranches = res;
-            $scope.isDataLoading = false;
-            for (var i = 0; i < res.length; i++) {
-                $scope.deleteloaderr.push(false);
-            }
-        })
-        .error(function(err) {
-            $scope.isDataLoading = false;
-        })
-    User.getCities().success(function(res) {
-            $scope.allCities = res;
-            console.log('cities', res)
-        })
-        .error(function(err) {
-            console.log(err)
-        })
+    Branch.getAll().success(function (res) {
+        console.log("res", res)
+        $scope.allBranches = res;
+        $rootScope.allBranches = res;
+        $scope.isDataLoading = false;
+        for (var i = 0; i < res.length; i++) {
+            $scope.deleteloaderr.push(false);
+        }
+    })
+            .error(function (err) {
+                $scope.isDataLoading = false;
+            })
+    User.getCities().success(function (res) {
+        $scope.allCities = res;
+        console.log('cities', res)
+    })
+            .error(function (err) {
+                console.log(err)
+            })
     $scope.final_obj = {};
     $scope.loaderr = false;
 
-    $scope.addBranch = function() {
+    $scope.addBranch = function () {
         console.log($scope.final_obj)
         for (var i = 0; i < $scope.allCities.length; i++) {
             if ($scope.final_obj.CityId == $scope.allCities[i].CityId) {
@@ -1355,34 +1355,34 @@ app.controller('BranchMainInfo', function($scope, User, Branch, $rootScope) {
             }
         }
         $scope.loaderr = true;
-        Branch.add($scope.final_obj).success(function(res) {
+        Branch.add($scope.final_obj).success(function (res) {
 
-                //$scope.deleteloaderr.push(false);
-                $scope.final_obj = {};
-                Branch.getAll().success(function(res) {
-                        console.log("res", res)
-                        $scope.deleteloaderr = [];
-                        $scope.allBranches = [];
-                        $scope.allBranches = res;
-                        $rootScope.allBranches = res;
-                        $scope.isDataLoading = false;
-                        $scope.loaderr = false;
-                        for (var i = 0; i < res.length; i++) {
-                            $scope.deleteloaderr.push(false);
-                        }
-                    })
-                    .error(function(err) {
-                        $scope.isDataLoading = false;
-                        $scope.loaderr = false;
-                    })
-
-            })
-            .error(function(err) {
+            //$scope.deleteloaderr.push(false);
+            $scope.final_obj = {};
+            Branch.getAll().success(function (res) {
+                console.log("res", res)
+                $scope.deleteloaderr = [];
+                $scope.allBranches = [];
+                $scope.allBranches = res;
+                $rootScope.allBranches = res;
+                $scope.isDataLoading = false;
                 $scope.loaderr = false;
+                for (var i = 0; i < res.length; i++) {
+                    $scope.deleteloaderr.push(false);
+                }
             })
+                    .error(function (err) {
+                        $scope.isDataLoading = false;
+                        $scope.loaderr = false;
+                    })
+
+        })
+                .error(function (err) {
+                    $scope.loaderr = false;
+                })
     }
     $scope.showgrid = true;
-    $scope.updataBranch = function(obj, index) {
+    $scope.updataBranch = function (obj, index) {
         $scope.gridindex = index;
         $scope.final_obj = obj;
         $scope.showgrid = false;
@@ -1390,77 +1390,77 @@ app.controller('BranchMainInfo', function($scope, User, Branch, $rootScope) {
         $scope.updateBtnShow = true;
     }
 
-    $scope.update = function() {
+    $scope.update = function () {
         $scope.loaderr = true;
-        Branch.add($scope.final_obj).success(function(res) {
-                // $scope.allBranches.push($scope.final_obj);
-                $scope.allBranches[$scope.gridindex] = $scope.final_obj;
-                $scope.final_obj = {};
-                $scope.showgrid = true;
-                $scope.saveBtnShow = true;
-                $scope.updateBtnShow = false;
-                $scope.loaderr = false;
-            })
-            .error(function(err) {
-                $scope.loaderr = false;
-            })
+        Branch.add($scope.final_obj).success(function (res) {
+            // $scope.allBranches.push($scope.final_obj);
+            $scope.allBranches[$scope.gridindex] = $scope.final_obj;
+            $scope.final_obj = {};
+            $scope.showgrid = true;
+            $scope.saveBtnShow = true;
+            $scope.updateBtnShow = false;
+            $scope.loaderr = false;
+        })
+                .error(function (err) {
+                    $scope.loaderr = false;
+                })
     }
 
-    $scope.deleteBranch = function(obj, index) {
+    $scope.deleteBranch = function (obj, index) {
         $scope.deleteloaderr[index] = true;
-        Branch.delete(obj.Id).success(function(res) {
-                $scope.deleteloaderr[index] = false;
-                $scope.allBranches.splice(index, 1);
-            })
-            .error(function(err) {
-                $scope.deleteloaderr[index] = false;
-            })
+        Branch.delete(obj.Id).success(function (res) {
+            $scope.deleteloaderr[index] = false;
+            $scope.allBranches.splice(index, 1);
+        })
+                .error(function (err) {
+                    $scope.deleteloaderr[index] = false;
+                })
     }
 })
 
-app.controller('BranchAvailableSeviceCtrl', function($scope, $rootScope, Branch, User) {
+app.controller('BranchAvailableSeviceCtrl', function ($scope, $rootScope, Branch, User) {
     console.log("all branch available ctrl")
     $scope.final_obj = {};
     $scope.isDataLoading = true;
     $scope.allServices = [];
-    User.getServices().success(function(res) {
-            for (var i = 0; i < res.length; i++) {
-                res[i].checked = false;
-                $scope.allServices.push(res[i]);
-            }
+    User.getServices().success(function (res) {
+        for (var i = 0; i < res.length; i++) {
+            res[i].checked = false;
+            $scope.allServices.push(res[i]);
+        }
 
-            $scope.isDataLoading = false;
-        })
-        .error(function(err) {
-            console.log(err)
-            $scope.isDataLoading = false;
-        })
+        $scope.isDataLoading = false;
+    })
+            .error(function (err) {
+                console.log(err)
+                $scope.isDataLoading = false;
+            })
 
 
-    $scope.change = function() {
+    $scope.change = function () {
         $scope.isDataLoading = true;
         for (var i = 0; i < $scope.allServices.length; i++) {
             $scope.allServices[i].checked = false;
         }
 
-        Branch.availableService($scope.final_obj.branchId).success(function(res) {
-                console.log("Res", res);
-                for (var i = 0; i < $scope.allServices.length; i++) {
-                    for (var j = 0; j < res.length; j++) {
-                        if ($scope.allServices[i].Id == res[j].Id) {
-                            $scope.allServices[i].checked = true;
-                        }
+        Branch.availableService($scope.final_obj.branchId).success(function (res) {
+            console.log("Res", res);
+            for (var i = 0; i < $scope.allServices.length; i++) {
+                for (var j = 0; j < res.length; j++) {
+                    if ($scope.allServices[i].Id == res[j].Id) {
+                        $scope.allServices[i].checked = true;
                     }
                 }
-                $scope.isDataLoading = false;
-            })
-            .error(function(err) {
-                $scope.isDataLoading = false;
-            })
+            }
+            $scope.isDataLoading = false;
+        })
+                .error(function (err) {
+                    $scope.isDataLoading = false;
+                })
     }
 
     $scope.loaderr = false;
-    $scope.updateServices = function() {
+    $scope.updateServices = function () {
         var final_Services = [];
 
         for (var i = 0; i < $scope.allServices.length; i++) {
@@ -1469,65 +1469,70 @@ app.controller('BranchAvailableSeviceCtrl', function($scope, $rootScope, Branch,
             }
         }
         $scope.loaderr = true;
-        Branch.updateWorkingDay(final_Services, $scope.final_obj.branchId).success(function(res) {
-                alert("Success fully updated services");
-                $scope.loaderr = false;
-            })
-            .error(function(err) {
-                alert("There is some server error in updating services");
-                $scope.loaderr = false;
-            })
+        Branch.updateWorkingDay(final_Services, $scope.final_obj.branchId).success(function (res) {
+            alert("Success fully updated services");
+            $scope.loaderr = false;
+        })
+                .error(function (err) {
+                    alert("There is some server error in updating services");
+                    $scope.loaderr = false;
+                })
     }
 
 })
 
-app.controller('BranchShitfCtrl', function($scope, Branch, $rootScope, $filter) {
+app.controller('BranchShitfCtrl', function ($scope, Branch, $rootScope, $filter) {
     $scope.final_obj = {};
     $scope.dateObj = {};
     $scope.saveBtnShow = true;
     $scope.updateBtnShow = false;
     $scope.loaderr = false;
     $scope.showgrid = true;
-    $scope.addShftYear = function() {
+    $scope.addShftYear = function () {
 
         try {
-            $scope.final_obj.YearStartDate = $scope.dateObj.YearStartDate.toISOString().split('T')[0]
-            $scope.final_obj.YearEndDate = $scope.dateObj.YearEndDate.toISOString().split('T')[0]
+//            $scope.final_obj.YearStartDate = $scope.dateObj.YearStartDate.toISOString().split('T')[0]
+//            $scope.final_obj.YearEndDate = $scope.dateObj.YearEndDate.toISOString().split('T')[0]
+            $scope.final_obj.YearStartDate = $filter("date")($scope.dateObj.YearStartDate, 'yyyy-MM-dd');
+            $scope.final_obj.YearEndDate = $filter("date")($scope.dateObj.YearEndDate, 'yyyy-MM-dd');
+
+//            $scope.final_obj.YearStartDate = $scope.dateObj.YearStartDate.toISOString().split('T')[0]
+//            $scope.final_obj.YearEndDate = $scope.dateObj.YearEndDate.toISOString().split('T')[0]
 
             console.log($scope.final_obj)
             $scope.loaderr = true;
-            Branch.addShiftYears($scope.final_obj).success(function(res) {
-                    console.log("res", res);
-                    
-                    $scope.final_obj = {};
-                    //$rootScope.ShiftYears.push(res);
-                    
-                    Branch.getShiftYears().success(function(res) {
-                            console.log("shift years", res);
-                            $rootScope.ShiftYears = [];
-                            $rootScope.ShiftYears = res;
-                            $rootScope.deleteShiftYearloader = [];
-                            $rootScope.shiftYearLoading = false;
-                            for (var i = 0; i < res.length; i++) {
-                                $rootScope.deleteShiftYearloader.push(false);
-                            }
-                            $scope.loaderr = false;
-                        })
-                        .error(function(err) {
-                            $rootScope.shiftYearLoading = false;
-                            $scope.loaderr = false;
-                        })
-                })
-                .error(function(err) {
+            Branch.addShiftYears($scope.final_obj).success(function (res) {
+                console.log("res", res);
+
+                $scope.final_obj = {};
+                //$rootScope.ShiftYears.push(res);
+
+                Branch.getShiftYears().success(function (res) {
+                    console.log("shift years", res);
+                    $rootScope.ShiftYears = [];
+                    $rootScope.ShiftYears = res;
+                    $rootScope.deleteShiftYearloader = [];
+                    $rootScope.shiftYearLoading = false;
+                    for (var i = 0; i < res.length; i++) {
+                        $rootScope.deleteShiftYearloader.push(false);
+                    }
                     $scope.loaderr = false;
                 })
+                        .error(function (err) {
+                            $rootScope.shiftYearLoading = false;
+                            $scope.loaderr = false;
+                        })
+            })
+                    .error(function (err) {
+                        $scope.loaderr = false;
+                    })
         } catch (err) {
 
         }
 
     }
 
-    $scope.updateShiftYear = function(obj, $index) {
+    $scope.updateShiftYear = function (obj, $index) {
         $scope.gridindex = $index;
         $scope.final_obj = obj;
         $scope.dateObj = {
@@ -1539,41 +1544,44 @@ app.controller('BranchShitfCtrl', function($scope, Branch, $rootScope, $filter) 
         $scope.showgrid = false;
     }
 
-    $scope.update = function() {
+    $scope.update = function () {
         try {
-            $scope.final_obj.YearStartDate = $scope.dateObj.YearStartDate.toISOString().split('T')[0]
-            $scope.final_obj.YearEndDate = $scope.dateObj.YearEndDate.toISOString().split('T')[0]
+//            $scope.final_obj.YearStartDate = $scope.dateObj.YearStartDate.toISOString().split('T')[0]
+//            $scope.final_obj.YearEndDate = $scope.dateObj.YearEndDate.toISOString().split('T')[0]
+
+            $scope.final_obj.YearStartDate = $filter("date")($scope.dateObj.YearStartDate, 'yyyy-MM-dd');
+            $scope.final_obj.YearEndDate = $filter("date")($scope.dateObj.YearEndDate, 'yyyy-MM-dd');
 
             console.log($scope.final_obj)
             $scope.loaderr = true;
-            Branch.updateShiftYears($scope.final_obj).success(function(res) {
-                    console.log("res", res);
-                    $rootScope.ShiftYears[$scope.gridindex] = $scope.final_obj;
-                    $scope.loaderr = false;
-                    $scope.final_obj = {};
-                    $scope.saveBtnShow = true;
-                    $scope.updateBtnShow = false;
-                    $scope.showgrid = true;
-                })
-                .error(function(err) {
-                    $scope.loaderr = false;
-                })
+            Branch.updateShiftYears($scope.final_obj).success(function (res) {
+                console.log("res", res);
+                $rootScope.ShiftYears[$scope.gridindex] = $scope.final_obj;
+                $scope.loaderr = false;
+                $scope.final_obj = {};
+                $scope.saveBtnShow = true;
+                $scope.updateBtnShow = false;
+                $scope.showgrid = true;
+            })
+                    .error(function (err) {
+                        $scope.loaderr = false;
+                    })
         } catch (err) {
 
         }
     }
 
-    $scope.deleteShift = function(obj, index) {
-            $rootScope.deleteShiftYearloader[index] = true;
-            Branch.deleteShiftYears(obj.Id).success(function(res) {
+    $scope.deleteShift = function (obj, index) {
+        $rootScope.deleteShiftYearloader[index] = true;
+        Branch.deleteShiftYears(obj.Id).success(function (res) {
+            $rootScope.deleteShiftYearloader[index] = false;
+            $rootScope.ShiftYears.splice(index, 1);
+        })
+                .error(function (err) {
                     $rootScope.deleteShiftYearloader[index] = false;
-                    $rootScope.ShiftYears.splice(index, 1);
                 })
-                .error(function(err) {
-                    $rootScope.deleteShiftYearloader[index] = false;
-                })
-        }
-        ////////////////////////////////Branch shifts portions///////////////////////////////////////
+    }
+    ////////////////////////////////Branch shifts portions///////////////////////////////////////
     $scope.brShiftObj = {};
     $scope.isBranchShiftLoading = false;
     $scope.timeObj = {};
@@ -1582,38 +1590,38 @@ app.controller('BranchShitfCtrl', function($scope, Branch, $rootScope, $filter) 
     $scope.saveShiftButton = true;
     $scope.updateShiftButton = false;
     $scope.showShiftGrid = false;
-    $scope.getBranchShifts = function() {
+    $scope.getBranchShifts = function () {
         $scope.isBranchShiftLoading = true;
         $scope.deleteBranchShiftLoader = [];
-        Branch.getBranchShifts($scope.brShiftObj.branchId, $scope.brShiftObj.shiftId).success(function(res) {
-                $scope.isBranchShiftLoading = false;
-                $scope.allBranchShifts = res;
-                for (var i = 0; i < res.length; i++) {
-                    $scope.deleteBranchShiftLoader.push(false);
-                }
-                $scope.showShiftGrid = true;
-            })
-            .error(function(err) {
-                $scope.isBranchShiftLoading = false;
+        Branch.getBranchShifts($scope.brShiftObj.branchId, $scope.brShiftObj.shiftId).success(function (res) {
+            $scope.isBranchShiftLoading = false;
+            $scope.allBranchShifts = res;
+            for (var i = 0; i < res.length; i++) {
+                $scope.deleteBranchShiftLoader.push(false);
+            }
+            $scope.showShiftGrid = true;
+        })
+                .error(function (err) {
+                    $scope.isBranchShiftLoading = false;
 
-            })
+                })
     }
 
-    $scope.deleteBranchShift = function(obj, index) {
+    $scope.deleteBranchShift = function (obj, index) {
         $scope.deleteBranchShiftLoader[index] = true;
-        Branch.deleteBranchShift(obj.Id).success(function(res) {
-                $scope.deleteBranchShiftLoader[index] = false;
-                $scope.allBranchShifts.splice(index, 1);
-            })
-            .error(function(err) {
-                $scope.deleteBranchShiftLoader[index] = false;
-            })
+        Branch.deleteBranchShift(obj.Id).success(function (res) {
+            $scope.deleteBranchShiftLoader[index] = false;
+            $scope.allBranchShifts.splice(index, 1);
+        })
+                .error(function (err) {
+                    $scope.deleteBranchShiftLoader[index] = false;
+                })
     }
 
     $scope.addShiftObj = {};
     $scope.SaveShiftloader = false;
 
-    $scope.addBranchShift = function() {
+    $scope.addBranchShift = function () {
         console.log($scope.timeObj);
 
         // var formatedStartTime = $filter("date")($scope.branchShiftStartTime, 'h:mm a');
@@ -1623,19 +1631,19 @@ app.controller('BranchShitfCtrl', function($scope, Branch, $rootScope, $filter) 
         $scope.addShiftObj.ShiftEndTime = $filter("date")($scope.timeObj.ShiftEndTime, 'h:mm a');
         console.log($scope.addShiftObj)
         $scope.SaveShiftloader = true;
-        Branch.addBranchShifts($scope.addShiftObj).success(function(res) {
-                $scope.SaveShiftloader = false;
-                $scope.addShiftObj = {};
-                $scope.timeObj = {};
-                alert("successfuly added branch shift");
-            })
-            .error(function(err) {
-                $scope.SaveShiftloader = false;
-            })
+        Branch.addBranchShifts($scope.addShiftObj).success(function (res) {
+            $scope.SaveShiftloader = false;
+            $scope.addShiftObj = {};
+            $scope.timeObj = {};
+            alert("successfuly added branch shift");
+        })
+                .error(function (err) {
+                    $scope.SaveShiftloader = false;
+                })
     }
 
 
-    $scope.updateBranchShift = function(obj, $index) {
+    $scope.updateBranchShift = function (obj, $index) {
 
         $scope.gridShiftindex = $index;
         $scope.addShiftObj = obj;
@@ -1650,84 +1658,84 @@ app.controller('BranchShitfCtrl', function($scope, Branch, $rootScope, $filter) 
         $scope.showShiftGrid = false;
     }
 
-    $scope.updateShift = function() {
+    $scope.updateShift = function () {
         try {
             $scope.addShiftObj.ShiftStartTime = $filter("date")($scope.timeObj.ShiftStartTime, 'h:mm a');
             $scope.addShiftObj.ShiftEndTime = $filter("date")($scope.timeObj.ShiftEndTime, 'h:mm a');
             console.log($scope.addShiftObj)
             $scope.SaveShiftloader = true;
-            Branch.updateBranchShift($scope.addShiftObj).success(function(res) {
-                    $scope.SaveShiftloader = false;
-                    $scope.addShiftObj = {};
-                    $scope.timeObj = {};
-                    alert("successfuly updated branch shift");
-                })
-                .error(function(err) {
-                    $scope.SaveShiftloader = false;
-                    alert("unable to update due to server error");
-                    $scope.addShiftObj = {};
-                    $scope.timeObj = {};
-                    $scope.saveShiftButton = true;
-                    $scope.updateShiftButton = false;
-                })
+            Branch.updateBranchShift($scope.addShiftObj).success(function (res) {
+                $scope.SaveShiftloader = false;
+                $scope.addShiftObj = {};
+                $scope.timeObj = {};
+                alert("successfuly updated branch shift");
+            })
+                    .error(function (err) {
+                        $scope.SaveShiftloader = false;
+                        alert("unable to update due to server error");
+                        $scope.addShiftObj = {};
+                        $scope.timeObj = {};
+                        $scope.saveShiftButton = true;
+                        $scope.updateShiftButton = false;
+                    })
         } catch (err) {
 
         }
     }
 })
 
-app.controller('BranchWorkingCtrl', function($scope, Branch) {
+app.controller('BranchWorkingCtrl', function ($scope, Branch) {
     $scope.final_obj = {};
     $scope.days = [{
-        checked: false,
-        value: "Monday"
-    }, {
-        checked: false,
-        value: "Tuesday"
-    }, {
-        checked: false,
-        value: "Wednesday"
-    }, {
-        checked: false,
-        value: "Thursday"
-    }, {
-        checked: false,
-        value: "Friday"
-    }, {
-        checked: false,
-        value: "Saturday"
-    }, {
-        checked: false,
-        value: "Sunday"
-    }]
+            checked: false,
+            value: "Monday"
+        }, {
+            checked: false,
+            value: "Tuesday"
+        }, {
+            checked: false,
+            value: "Wednesday"
+        }, {
+            checked: false,
+            value: "Thursday"
+        }, {
+            checked: false,
+            value: "Friday"
+        }, {
+            checked: false,
+            value: "Saturday"
+        }, {
+            checked: false,
+            value: "Sunday"
+        }]
 
     $scope.isDataLoading = false;
-    $scope.change = function() {
+    $scope.change = function () {
         $scope.isDataLoading = true;
         for (var i = 0; i < $scope.days.length; i++) {
             $scope.days[i].checked = false;
         }
-        Branch.getWorkingDays($scope.final_obj.branchId).success(function(res) {
-                console.log("res", res, $scope.days);
-                for (var i = 0; i < $scope.days.length; i++) {
+        Branch.getWorkingDays($scope.final_obj.branchId).success(function (res) {
+            console.log("res", res, $scope.days);
+            for (var i = 0; i < $scope.days.length; i++) {
 
-                    for (var j = 0; j < res.length; j++) {
-                        if (res[j] == $scope.days[i].value) {
-                            console.log("in if");
-                            $scope.days[i].checked = true;
-                        }
+                for (var j = 0; j < res.length; j++) {
+                    if (res[j] == $scope.days[i].value) {
+                        console.log("in if");
+                        $scope.days[i].checked = true;
                     }
-
                 }
-                $scope.isDataLoading = false;
-            })
-            .error(function(err) {
-                $scope.isDataLoading = false;
-            })
+
+            }
+            $scope.isDataLoading = false;
+        })
+                .error(function (err) {
+                    $scope.isDataLoading = false;
+                })
     }
 
     $scope.loaderr1 = false;
-    $scope.updateWorkingDay = function() {
+    $scope.updateWorkingDay = function () {
         var final_Days = [];
 
         for (var i = 0; i < $scope.days.length; i++) {
@@ -1736,13 +1744,13 @@ app.controller('BranchWorkingCtrl', function($scope, Branch) {
             }
         }
         $scope.loaderr1 = true;
-        Branch.updateWorkingDay(final_Days, $scope.final_obj.branchId).success(function(res) {
-                alert("Success fully updated working days");
-                $scope.loaderr1 = false;
-            })
-            .error(function(err) {
-                $scope.loaderr1 = false;
-            })
+        Branch.updateWorkingDay(final_Days, $scope.final_obj.branchId).success(function (res) {
+            alert("Success fully updated working days");
+            $scope.loaderr1 = false;
+        })
+                .error(function (err) {
+                    $scope.loaderr1 = false;
+                })
     }
 
     // $scope.change = function(index) {
@@ -1752,33 +1760,33 @@ app.controller('BranchWorkingCtrl', function($scope, Branch) {
 })
 
 
-app.controller('BranchSetupCtrl', function($scope, Branch, $rootScope) {
+app.controller('BranchSetupCtrl', function ($scope, Branch, $rootScope) {
 
     $rootScope.shiftYearLoading = true;
     $rootScope.deleteShiftYearloader = [];
-    Branch.getShiftYears().success(function(res) {
-            console.log("shift years", res);
-            $rootScope.ShiftYears = res;
-            $rootScope.shiftYearLoading = false;
-            for (var i = 0; i < res.length; i++) {
-                $rootScope.deleteShiftYearloader.push(false);
-            }
-        })
-        .error(function(err) {
-            $rootScope.shiftYearLoading = false;
-        })
-        // $scope.tabs = [
-        //     true, false, false, false
-        // ]
-        // $scope.tabclick = function(ind) {
-        //     for (var i = 0; i < $scope.tabs.length; i++) {
-        //         if (i == ind) {
-        //             $scope.tabs[i] = true;
-        //         } else {
-        //             $scope.tabs[i] = false;
-        //         }
-        //     }
-        // }
+    Branch.getShiftYears().success(function (res) {
+        console.log("shift years", res);
+        $rootScope.ShiftYears = res;
+        $rootScope.shiftYearLoading = false;
+        for (var i = 0; i < res.length; i++) {
+            $rootScope.deleteShiftYearloader.push(false);
+        }
+    })
+            .error(function (err) {
+                $rootScope.shiftYearLoading = false;
+            })
+    // $scope.tabs = [
+    //     true, false, false, false
+    // ]
+    // $scope.tabclick = function(ind) {
+    //     for (var i = 0; i < $scope.tabs.length; i++) {
+    //         if (i == ind) {
+    //             $scope.tabs[i] = true;
+    //         } else {
+    //             $scope.tabs[i] = false;
+    //         }
+    //     }
+    // }
 
     // Branch.getAll().success(function(res) {
     //     console.log("res",res)
@@ -2388,120 +2396,124 @@ app.controller('BranchSetupCtrl', function($scope, Branch, $rootScope) {
 // })
 
 
-app.controller('SignupCtrl', ['$scope', '$rootScope', '$http', '$state', '$location', function($scope, $rootScope, $http, $state, $location) {
+app.controller('SignupCtrl', ['$scope', '$rootScope', '$http', '$state', '$location', function ($scope, $rootScope, $http, $state, $location) {
 
-    $scope.user = {};
-    $scope.user.MobileNumber = "";
-    var User = {
-        UserName: "",
-        Password: ""
-    };
-    $scope.regex = '^[a-zA-Z]+[a-zA-Z0-9._-]+@[a-z]+\.[a-z.]{2,5}$';
+        $scope.user = {};
+        $scope.user.MobileNumber = "";
+        var User = {
+            UserName: "",
+            Password: ""
+        };
+        $scope.regex = '^[a-zA-Z]+[a-zA-Z0-9._-]+@[a-z]+\.[a-z.]{2,5}$';
 
-    $scope.register = function(user) {
-        var errors = [];
-        if ($scope.user.FirstName == null || $scope.user.FirstName == "") {
-            errors.push({ message: 'First Name is required' })
-        }
+        $scope.register = function (user) {
+            var errors = [];
+            if ($scope.user.FirstName == null || $scope.user.FirstName == "") {
+                errors.push({message: 'First Name is required'})
+            }
 
-        if ($scope.user.MobileNumber == null || $scope.user.MobileNumber == "") {
-            errors.push({ message: 'Mobile Number is required' })
-        }
+            if ($scope.user.MobileNumber == null || $scope.user.MobileNumber == "") {
+                errors.push({message: 'Mobile Number is required'})
+            }
 
-        if ($scope.user.Password == null || $scope.user.Password == "") {
-            errors.push({ message: 'Password is required' })
-        }
+            if ($scope.user.Password == null || $scope.user.Password == "") {
+                errors.push({message: 'Password is required'})
+            }
 
-        if ($scope.user.EmailAddress == null || $scope.user.EmailAddress == "") {
-            errors.push({ message: 'Email is required' });
-        } else {
-            var email = $scope.user.EmailAddress.match($scope.regex);
-            if (email == null) {
-                console.log("Error-4a");
-                errors.push({ message: 'Not a valid email' });
+            if ($scope.user.EmailAddress == null || $scope.user.EmailAddress == "") {
+                errors.push({message: 'Email is required'});
+            } else {
+                var email = $scope.user.EmailAddress.match($scope.regex);
+                if (email == null) {
+                    console.log("Error-4a");
+                    errors.push({message: 'Not a valid email'});
+                }
+            }
+
+            // if ($scope.user.LastName == null || $scope.user.LastName == "") {
+            //     errors.push({ message: 'Last Name is required' })
+            // }
+
+
+            //  if ($scope.user.ReferredById == null || $scope.user.ReferredById == "Select Reference") {
+            //     errors.push({ message: 'Reference is required' })
+            // }
+
+
+            //  if ($scope.user.PromoKey == null || $scope.user.PromoKey == "") {
+            //     errors.push({ message: 'Promo Key is required' })
+            // }
+
+            if (errors.length != 0) {
+                $scope.register_error_message = "Failed to Add Customer";
+                for (var i = 0; i < errors.length; i++) {
+                    if (errors[i].message == "First Name is required") {
+                        $scope.register_error_message_firstname = errors[i].message;
+                        ;
+                    }
+
+                    if (errors[i].message == "Mobile Number is required") {
+                        $scope.register_error_message_mobileno = errors[i].message;
+                        ;
+                    }
+
+                    if (errors[i].message == "Password is required") {
+                        $scope.register_error_message_password = errors[i].message;
+                        ;
+                    }
+
+                    if (errors[i].message == "Not a valid email" || errors[i].message == "Email is required") {
+                        $scope.register_error_message_email = errors[i].message;
+                    }
+                }
+                ;
+
+            } else {
+                var params = "grant_type=client_credentials&client_id=Android01&client_secret=21B5F798-BE55-42BC-8AA8-0025B903DC3B&scope=app1";
+                User['UserName'] = $scope.user.MobileNumber;
+                User['Password'] = $scope.user.Password;
+                $scope.user.User = User;
+                $scope.user.Id = null;
+                var url = "http://autotecauth.azurewebsites.net/identity/connect/token";
+                $http.post(url, params, {
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+                })
+                        .success(function (result) {
+                            $http.post('http://autotecapi.azurewebsites.net/api/CustomerRegistration', $scope.user, {
+                                headers: {
+                                    'Authorization': "Bearer" + " " + result.access_token
+                                }
+                            }).success(function (res) {
+                                if (res == "Customer has been registerd succesfully") {
+                                    console.log("Customer Registered Successfully");
+                                    $scope.register_error_message = "Customer Registered Successfully";
+                                    $location.path('/mobileappusers');
+                                } else {
+                                    console.log("Failed to Register Customer");
+                                    $scope.register_error_message = "Failed to Register Customer";
+                                }
+                            })
+                                    .error(function (err) {
+                                        if (err.Message == "" || err.Message != null) {
+                                            if (err.Message == "User name not available") {
+                                                console.log("Failed to Add Customer");
+                                            } else {
+
+                                            }
+                                        } else {
+
+                                        }
+                                    })
+                        })
+                        .error(function (error) {
+                            console.log("API calling Error", error);
+                            $scope.register_error_message = "Failed to Add Customer";
+                        })
+
             }
         }
 
-        // if ($scope.user.LastName == null || $scope.user.LastName == "") {
-        //     errors.push({ message: 'Last Name is required' })
-        // }
-
-
-        //  if ($scope.user.ReferredById == null || $scope.user.ReferredById == "Select Reference") {
-        //     errors.push({ message: 'Reference is required' })
-        // }
-
-
-        //  if ($scope.user.PromoKey == null || $scope.user.PromoKey == "") {
-        //     errors.push({ message: 'Promo Key is required' })
-        // }
-
-        if (errors.length != 0) {
-            $scope.register_error_message = "Failed to Add Customer";
-            for (var i = 0; i < errors.length; i++) {
-                if (errors[i].message == "First Name is required") {
-                    $scope.register_error_message_firstname = errors[i].message;;
-                }
-
-                if (errors[i].message == "Mobile Number is required") {
-                    $scope.register_error_message_mobileno = errors[i].message;;
-                }
-
-                if (errors[i].message == "Password is required") {
-                    $scope.register_error_message_password = errors[i].message;;
-                }
-
-                if (errors[i].message == "Not a valid email" || errors[i].message == "Email is required") {
-                    $scope.register_error_message_email = errors[i].message;
-                }
-            };
-
-        } else {
-            var params = "grant_type=client_credentials&client_id=Android01&client_secret=21B5F798-BE55-42BC-8AA8-0025B903DC3B&scope=app1";
-            User['UserName'] = $scope.user.MobileNumber;
-            User['Password'] = $scope.user.Password;
-            $scope.user.User = User;
-            $scope.user.Id = null;
-            var url = "http://autotecauth.azurewebsites.net/identity/connect/token";
-            $http.post(url, params, {
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }
-                })
-                .success(function(result) {
-                    $http.post('http://autotecapi.azurewebsites.net/api/CustomerRegistration', $scope.user, {
-                            headers: {
-                                'Authorization': "Bearer" + " " + result.access_token
-                            }
-                        }).success(function(res) {
-                            if (res == "Customer has been registerd succesfully") {
-                                console.log("Customer Registered Successfully");
-                                $scope.register_error_message = "Customer Registered Successfully";
-                                $location.path('/mobileappusers');
-                            } else {
-                                console.log("Failed to Register Customer");
-                                $scope.register_error_message = "Failed to Register Customer";
-                            }
-                        })
-                        .error(function(err) {
-                            if (err.Message == "" || err.Message != null) {
-                                if (err.Message == "User name not available") {
-                                    console.log("Failed to Add Customer");
-                                } else {
-
-                                }
-                            } else {
-
-                            }
-                        })
-                })
-                .error(function(error) {
-                    console.log("API calling Error", error);
-                    $scope.register_error_message = "Failed to Add Customer";
-                })
-
-        }
-    }
-
-}])
+    }])
 
 
 // .controller("MyCtrl", function($scope) {
@@ -2519,8 +2531,8 @@ app.controller('SignupCtrl', ['$scope', '$rootScope', '$http', '$state', '$locat
 //   };
 
 // })
-app.service('NavigateState', function($state, localStorageService) {
-    this.navigate = function(state, params) {
+app.service('NavigateState', function ($state, localStorageService) {
+    this.navigate = function (state, params) {
         //      $rootScope.navigate=function(state,params){
         var lang = localStorageService.get('pageLanguage');
         //     console.log(lang);
