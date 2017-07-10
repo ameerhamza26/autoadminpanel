@@ -451,6 +451,12 @@ angular.module('CoreApi', ['CoreApiUtilities'])
         var url = httpService.Utils.buildUrl(new Array('api', 'branch',  branchId, 'workingdays'));
         return httpService.$http.post(url, bodyParams, config);
     }
+
+    this.addServices = function(bodyParams, branchId) {
+        var config = httpService.Utils.getHeader();
+        var url = httpService.Utils.buildUrl(new Array('api', 'branch',  branchId, 'services'));
+        return httpService.$http.post(url, bodyParams, config);
+    }
 }])
 
 

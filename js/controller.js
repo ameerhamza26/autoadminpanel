@@ -1458,6 +1458,27 @@ app.controller('BranchAvailableSeviceCtrl', function($scope, $rootScope, Branch,
                 $scope.isDataLoading = false;
             })
     }
+
+    $scope.loaderr = false;
+    $scope.updateServices = function() {
+        var final_Services = [];
+
+        for (var i = 0; i < $scope.allServices.length; i++) {
+            if ($scope.allServices[i].checked) {
+                final_Services.push($scope.allServices[i]);
+            }
+        }
+        $scope.loaderr = true;
+        Branch.updateWorkingDay(final_Services, $scope.final_obj.branchId).success(function(res) {
+                alert("Success fully updated services");
+                $scope.loaderr = false;
+            })
+            .error(function(err) {
+                alert("There is some server error in updating services");
+                $scope.loaderr = false;
+            })
+    }
+
 })
 
 app.controller('BranchShitfCtrl', function($scope, Branch, $rootScope, $filter) {
